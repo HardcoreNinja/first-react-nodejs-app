@@ -1,9 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Axios from 'axios';
 
 export default function App() {
     const [movieName, setMovieName] = useState('');
     const [movieReview, setMovieReview] = useState('');
+    const [content, setContent] = useState([]);
+
+    useEffect(() => {
+        Axios.get('http://localhost:5000/api/get').then((response) => {
+            console.log(response.data);
+            const tempContent = response.data.map((element) =>
+                <li key={element.id}>{`${element.movie_name} | ${element.movie_review}`}</li>
+            );
+            setContent(tempContent);
+        });
+    }, []);
 
     const submitReview = () => {
         Axios.post('http://localhost:5000/api/insert',
@@ -25,6 +36,10 @@ export default function App() {
                 <input type='text' name='movieReview' onChange={(e) => setMovieReview(e.target.value)} />
                 <button onClick={submitReview}>Submit</button>
             </div>
+
+            <ul>
+                {content !== undefined ? content : ''}
+            </ul>
         </div>
     )
 }
