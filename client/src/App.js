@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { v4 as uuidv4 } from 'uuid';
 import Axios from 'axios';
 
 export default function App() {
@@ -9,10 +10,7 @@ export default function App() {
     useEffect(() => {
         Axios.get('http://localhost:5000/api/get').then((response) => {
             console.log(response.data);
-            const tempContent = response.data.map((element) =>
-                <li key={element.id}>{`${element.movie_name} | ${element.movie_review}`}</li>
-            );
-            setContent(tempContent);
+            setContent(response.data);
         });
     }, []);
 
@@ -21,9 +19,9 @@ export default function App() {
             {
                 movieName: movieName,
                 movieReview: movieReview
-            }).then(
-                alert('successful insert!')
-            );
+            });
+
+        setContent([...content, { movie_name: movieName, movie_review: movieReview }]);
     };
 
     return (
@@ -38,7 +36,7 @@ export default function App() {
             </div>
 
             <ul>
-                {content !== undefined ? content : ''}
+                {content.map((value) => <h1>{`${value.movie_name} | ${value.movie_review}`}</h1>)}
             </ul>
         </div>
     )
